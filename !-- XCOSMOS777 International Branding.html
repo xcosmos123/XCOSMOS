@@ -1,0 +1,1293 @@
+<!-- XCOSMOS International Branding Website
+     Built using TailwindCSS + Premium Typography
+     Style inspired by SpaceX / Palantir / OpenAI
+-->
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XCOSMOS | Global Digital Ecosystem</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            brand: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              accent: '#3b82f6',
+              highlight: '#60a5fa',
+              dark: '#050505'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { background:#050505; color:#e5e5e5; }
+    
+    /* FIX FOR FIXED HEADER SCROLLING */
+    html { 
+      scroll-padding-top: 6rem; /* Ensures nav doesn't cover content on scroll */
+    }
+
+    /* ===== PREMIUM PROFESSIONAL ANIMATIONS (Fast & Smooth) ===== */
+    .reveal { 
+      opacity: 0; 
+      transform: translateY(10px); /* Reduced movement for even faster perceived speed */
+      /* "Expo Out" easing - starts fast, lands gently. Professional feel. */
+      transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1), transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    .float-slow { animation: float 12s ease-in-out infinite }
+    .float-fast { animation: float 7s ease-in-out infinite }
+    @keyframes float {
+      0%,100% { transform: translateY(0) }
+      50% { transform: translateY(-10px) }
+    }
+
+    /* Glass cards with snappy micro-interaction */
+    .corp-card {
+      background: rgba(20,20,20,.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.08);
+      /* Fast, reliable transition */
+      transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.2s ease, box-shadow 0.2s ease;
+      will-change: transform;
+    }
+    .corp-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59,130,246,.5);
+      box-shadow: 0 20px 40px -10px rgba(59,130,246,.2);
+    }
+
+    /* Animated gradient underline */
+    .grad-line {
+      height:2px;
+      width:120px;
+      background:linear-gradient(90deg,#3b82f6,#60a5fa,#3b82f6);
+      background-size:200% 100%;
+      animation:gradmove 6s linear infinite;
+    }
+    @keyframes gradmove {
+      0%{background-position:0%}
+      100%{background-position:200%}
+    }
+
+    /* Cursor glow (Optimized for GPU) */
+    .cursor-glow {
+      position:fixed;
+      top: 0;
+      left: 0;
+      width:280px;
+      height:280px;
+      background:radial-gradient(circle,rgba(59,130,246,.18),transparent 60%);
+      pointer-events:none;
+      z-index:0;
+      transform: translate3d(-100%, -100%, 0); /* Initial off-screen pos */
+      will-change: transform;
+    }
+
+    /* Prevent decorative overlays from blocking clicks */
+    .absolute:not(.pointer-events-auto) {
+      pointer-events: none;
+    }
+
+    footer {
+      position: relative;
+      z-index: 50;
+    }
+
+    footer a {
+      position: relative;
+      z-index: 60;
+      pointer-events: auto;
+    }
+    
+    /* Utility for hidden elements */
+    .hidden-force { display: none !important; }
+  </style>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init('9kM0sOB6s_IH3WNzq');
+   })();
+</script>
+</head>
+<body class="antialiased">
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- NAV -->
+<nav class="fixed w-full z-50 bg-black/90 backdrop-blur-md border-b border-white/5 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
+    <!-- Brand Logo -->
+    <a href="#" class="font-brand text-2xl font-bold tracking-widest z-50 relative">XCOSMOS</a>
+    
+    <!-- Desktop Menu -->
+    <div class="hidden md:flex gap-8 text-xs tracking-widest items-center">
+      <a href="#about" class="opacity-70 hover:opacity-100 transition-opacity">ABOUT</a>
+      <a href="#mission" class="opacity-70 hover:opacity-100 transition-opacity">MISSION</a>
+      <a href="#capabilities" class="opacity-70 hover:opacity-100 transition-opacity">CAPABILITIES</a>
+      <a href="#projects" class="opacity-70 hover:opacity-100 transition-opacity">PROJECTS</a>
+      <a href="#edtech" class="opacity-70 hover:opacity-100 transition-opacity">ED‑TECH</a>
+      <a href="#careers" class="opacity-70 hover:opacity-100 transition-opacity">CAREERS</a>
+      <a href="#team" class="opacity-70 hover:opacity-100 transition-opacity">TEAM</a>
+      <a href="#shop" class="opacity-70 hover:opacity-100 text-brand-highlight transition-opacity">SHOP</a>
+      <a href="#contact" class="ml-4 px-4 py-2 bg-white text-black font-bold hover:bg-brand-accent hover:text-white transition-colors">CONTACT</a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none p-2 z-50" onclick="toggleMobileMenu()">
+      <i data-lucide="menu" class="w-7 h-7"></i>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Dropdown -->
+  <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-black/95 backdrop-blur-xl border-b border-white/10 flex flex-col items-center py-10 space-y-8 shadow-2xl transition-all duration-300 max-h-[85vh] overflow-y-auto z-40 pointer-events-auto">
+    <a href="#about" class="text-base tracking-[0.2em] text-gray-300 hover:text-white w-full text-center py-2" onclick="toggleMobileMenu()">ABOUT</a>
+    <a href="#mission" class="text-base tracking-[0.2em] text-gray-300 hover:text-white w-full text-center py-2" onclick="toggleMobileMenu()">MISSION</a>
+    <a href="#capabilities" class="text-base tracking-[0.2em] text-gray-300 hover:text-white w-full text-center py-2" onclick="toggleMobileMenu()">CAPABILITIES</a>
+    <a href="#projects" class="text-base tracking-[0.2em] text-gray-300 hover:text-white w-full text-center py-2" onclick="toggleMobileMenu()">PROJECTS</a>
+    <a href="#edtech" class="text-base tracking-[0.2em] text-gray-300 hover:text-white w-full text-center py-2" onclick="toggleMobileMenu()">ED‑TECH</a>
+    <a href="#careers" class="text-base tracking-[0.2em] text-gray-300 hover:text-white w-full text-center py-2" onclick="toggleMobileMenu()">CAREERS</a>
+    <a href="#team" class="text-base tracking-[0.2em] text-gray-300 hover:text-white w-full text-center py-2" onclick="toggleMobileMenu()">TEAM</a>
+    <a href="#shop" class="text-base tracking-[0.2em] text-brand-highlight hover:text-white w-full text-center py-2 font-semibold" onclick="toggleMobileMenu()">SHOP</a>
+    <a href="#contact" class="px-10 py-4 bg-white text-black text-sm font-bold tracking-widest mt-4" onclick="toggleMobileMenu()">CONTACT US</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="min-h-screen flex items-center justify-center px-6 bg-gradient-to-b from-black via-[#070a12] to-black relative overflow-hidden">
+  <!-- Background image (High Priority) -->
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa" alt="Earth from space" class="w-full h-full object-cover opacity-30" fetchpriority="high" />
+  </div>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.25),transparent_60%)] float-slow"></div>
+
+  <div class="relative max-w-6xl text-center reveal">
+    <p class="text-xs tracking-[0.4em] text-gray-300 mb-8 uppercase">XCOSMOS · Global Science & Technology Ecosystem</p>
+    <h1 class="font-brand text-4xl md:text-7xl font-semibold leading-[1.15] tracking-tight mb-6 text-white">
+      The Next Generation of Learning
+    </h1>
+    <div class="grad-line mx-auto mb-10"></div>
+    <p class="text-lg md:text-xl text-gray-200 max-w-4xl mx-auto leading-relaxed mb-14">
+      Engineering intelligent systems across Earth science, AI, robotics, IoT, software,
+      and data‑driven business intelligence.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-6 justify-center">
+      <a href="#contact" class="px-12 py-4 bg-white text-black text-sm tracking-widest font-semibold hover:scale-105 transition text-center">CONTACT XCOSMOS</a>
+      <a href="#capabilities" class="px-12 py-4 border border-white/30 text-white text-sm tracking-widest hover:bg-white/10 transition text-center">EXPLORE CAPABILITIES</a>
+    </div>
+  </div>
+</header>
+
+<!-- ABOUT -->
+<section id="about" class="py-24 md:py-36 px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+    <div class="reveal">
+      <h2 class="font-brand text-3xl md:text-5xl mb-10">ABOUT XCOSMOS</h2>
+      <p class="text-gray-400 leading-9 mb-8">
+        XCOSMOS is a globally oriented digital ecosystem established to bridge advanced
+        scientific research with real‑world engineering and deployment. Our work operates
+        at the convergence of climate science, Earth observation, intelligent automation,
+        and data‑driven decision systems.
+      </p>
+      <p class="text-gray-400 leading-9">
+        We collaborate with governments, industries, academic institutions, and
+        innovation partners to develop reliable, scalable, and future‑ready
+        technologies addressing planetary‑scale challenges.
+      </p>
+    </div>
+
+    <!-- About image grid (Eager Loading for Instant View) -->
+    <div class="grid grid-cols-2 gap-6 reveal">
+      <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564" class="rounded-lg object-cover h-48 w-full" alt="Satellite view" loading="eager" />
+      <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758" class="rounded-lg object-cover h-48 w-full" alt="Robotics lab" loading="eager" />
+      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee" class="rounded-lg object-cover h-48 w-full col-span-2" alt="Climate monitoring" loading="eager" />
+    </div>
+  </div>
+</section>
+
+<!-- MISSION & VISION -->
+<section id="mission" class="py-24 md:py-32 px-6 bg-black/50 border-y border-white/5 relative overflow-hidden">
+  <!-- Subtle Background Glow -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-brand-accent/5 blur-[100px] pointer-events-none -z-10"></div>
+
+  <div class="max-w-7xl mx-auto">
+    <!-- Section Header -->
+    <div class="text-center mb-16 reveal">
+      <h2 class="font-brand text-3xl md:text-5xl mb-6 tracking-wide">OUR MANDATE</h2>
+      <div class="h-1 w-20 bg-gradient-to-r from-brand-accent to-brand-highlight mx-auto rounded-full"></div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12 items-stretch">
+
+      <!-- Mission -->
+      <div class="reveal corp-card p-12 rounded-xl border-t-2 border-brand-accent flex flex-col items-center text-center hover:border-brand-accent transition-colors duration-500">
+        <div class="mb-8 p-1 rounded-full border border-brand-accent/30">
+          <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee" alt="Mission" class="w-24 h-24 rounded-full object-cover" loading="eager" />
+        </div>
+        <h2 class="font-brand text-xl tracking-[0.3em] text-brand-highlight mb-6 uppercase font-bold">Mission</h2>
+        <p class="font-brand text-lg md:text-xl leading-relaxed text-gray-300">
+          To integrate science, technology, and learning to build intelligent,
+          sustainable systems across environment, industry, business, and society—transforming
+          complex data into real‑world impact through research, automation, and innovation.
+        </p>
+      </div>
+
+      <!-- Vision -->
+      <div class="reveal corp-card p-12 rounded-xl border-t-2 border-brand-highlight flex flex-col items-center text-center hover:border-brand-highlight transition-colors duration-500">
+        <div class="mb-8 p-1 rounded-full border border-brand-highlight/30">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa" alt="Vision" class="w-24 h-24 rounded-full object-cover" loading="eager" />
+        </div>
+        <h2 class="font-brand text-xl tracking-[0.3em] text-brand-highlight mb-6 uppercase font-bold">Vision</h2>
+        <p class="font-brand text-lg md:text-xl leading-relaxed text-gray-300">
+          To evolve as a globally trusted science and innovation ecosystem—advancing
+          climate resilience, sustainable living, intelligent automation, and knowledge creation
+          through next‑generation learning and technology.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITIES -->
+<section id="capabilities" class="py-24 md:py-32 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="max-w-3xl mb-20">
+      <h2 class="font-brand text-3xl md:text-4xl mb-6">CORE CAPABILITIES</h2>
+      <p class="text-gray-400 leading-8">
+        XCOSMOS delivers integrated science and technology capabilities designed for
+        real-world deployment. Our work emphasizes accuracy, reliability, and
+        decision-support at regional to planetary scales.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12">
+      <!-- Capability 1 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564" alt="Atmospheric Science" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Atmospheric Science & Climate Intelligence</h3>
+          <p class="text-gray-400 leading-8">
+            Numerical weather prediction (WRF), climate variability analysis, air quality
+            assessment, disaster risk modeling, renewable energy feasibility studies, and
+            micro-climate investigations supporting policy and infrastructure planning.
+          </p>
+        </div>
+      </div>
+
+      <!-- Capability 2 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa" alt="Geospatial Intelligence" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Geospatial Intelligence & Earth Observation</h3>
+          <p class="text-gray-400 leading-8">
+            GIS-based spatial analytics, satellite data interpretation, land-use and terrain
+            analysis, resource monitoring, and decision-ready geospatial visualizations.
+          </p>
+        </div>
+      </div>
+
+      <!-- Capability 3 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758" alt="Robotics and IoT" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Robotics, IoT & Embedded Systems</h3>
+          <p class="text-gray-400 leading-8">
+            Autonomous robotic platforms, environmental monitoring rovers, distributed IoT
+            sensor networks, embedded system design, and drone-based data acquisition systems.
+          </p>
+        </div>
+      </div>
+
+      <!-- Capability 4 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e" alt="Artificial Intelligence" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Artificial Intelligence & Data Science</h3>
+          <p class="text-gray-400 leading-8">
+            Machine learning models, predictive analytics, computer vision systems, AI-based
+            environmental forecasting, and intelligent decision-support frameworks.
+          </p>
+        </div>
+      </div>
+
+      <!-- Capability 5 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c" alt="Software Systems" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Software Platforms & Digital Systems</h3>
+          <p class="text-gray-400 leading-8">
+            Custom web and mobile platforms, ERP/CRM solutions, API ecosystems, and scalable
+            cloud-ready digital infrastructures supporting enterprise and research workflows.
+          </p>
+        </div>
+      </div>
+
+      <!-- Capability 6 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7" alt="Business Intelligence" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Business Intelligence, Strategy & Growth Systems</h3>
+          <p class="text-gray-400 leading-8">
+            Data-driven business analytics, digital marketing intelligence, performance
+            optimization, market analysis, customer insights, and decision-support systems
+            enabling sustainable business growth and strategic planning.
+          </p>
+        </div>
+      </div>
+
+      <!-- Capability 7 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399" alt="Sustainable Environment" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Sustainable Environment & Organic Systems</h3>
+          <p class="text-gray-400 leading-8">
+            Sustainable environmental practices including organic food cultivation,
+            climate-resilient agriculture, soil health monitoring, eco-restoration
+            initiatives, and technology-supported sustainability solutions for communities
+            and ecosystems.
+          </p>
+        </div>
+      </div>
+
+      <!-- Capability 8 -->
+      <div class="flex gap-6 items-start reveal">
+        <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429" alt="Nature Friendly Travel" class="w-20 h-20 object-cover rounded-lg opacity-80" loading="eager" />
+        <div>
+          <h3 class="font-brand text-2xl mb-3">Nature‑Friendly Travel & Eco‑Tourism Intelligence</h3>
+          <p class="text-gray-400 leading-8">
+            Environmentally responsible travel planning, nature-friendly tourism models,
+            eco-tourism analytics, sustainable travel guidance, and geospatial intelligence
+            supporting conservation-aware tourism and community-based travel initiatives.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES / APPLICATION DOMAINS -->
+<section id="usecases" class="py-24 md:py-32 px-6 bg-black/40 border-t border-white/5">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="font-brand text-3xl md:text-4xl mb-16">APPLICATION DOMAINS</h2>
+
+    <div class="grid md:grid-cols-3 gap-10">
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-accent before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Climate Risk & Disaster Systems</h3>
+        <p class="text-gray-400 leading-7">Climate risk assessment, disaster preparedness, early‑warning systems, and climate‑resilience planning for government and regional authorities.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-highlight before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Smart Cities & Urban Systems</h3>
+        <p class="text-gray-400 leading-7">Urban planning, smart cities, air‑quality management, infrastructure resilience, and data‑driven urban governance.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-accent before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Environmental Robotics & IoT</h3>
+        <p class="text-gray-400 leading-7">Robotics and IoT‑based intelligent sensing networks and autonomous monitoring systems for atmosphere and ecosystems.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-highlight before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Industrial & Infrastructure Intelligence</h3>
+        <p class="text-gray-400 leading-7">Industrial automation, infrastructure monitoring, predictive maintenance, and intelligent asset‑management systems.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-accent before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Business & Marketing Intelligence</h3>
+        <p class="text-gray-400 leading-7">Business intelligence platforms, digital marketing analytics, performance optimization, and data‑driven growth strategy systems.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-highlight before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Education & Knowledge Systems</h3>
+        <p class="text-gray-400 leading-7">Scientific education, research enablement, training programs, internships, and next‑generation learning ecosystems.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-accent before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Sustainable Food & Agriculture Systems</h3>
+        <p class="text-gray-400 leading-7">Organic food cultivation, climate‑smart agriculture, soil health monitoring, agro‑IoT solutions, and sustainable food production systems.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-highlight before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Nature‑Friendly Travel & Eco‑Tourism</h3>
+        <p class="text-gray-400 leading-7">Eco‑tourism planning, nature‑friendly travel guidance, low‑impact tourism models, geospatial route intelligence, and conservation‑focused travel systems.</p>
+      </div>
+
+      <div class="corp-card p-8 reveal relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-l-4 before:border-brand-accent before:opacity-70">
+        <h3 class="font-brand text-xl mb-3">Community Sustainability & Living Systems</h3>
+        <p class="text-gray-400 leading-7">Community‑driven sustainability initiatives, environmental awareness systems, smart village concepts, and technology‑enabled sustainable living models.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE WORK WITH -->
+<section id="partners" class="py-24 md:py-32 px-6 border-t border-white/5">
+  <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+
+    <!-- Text -->
+    <div class="reveal">
+      <h2 class="font-brand text-3xl md:text-4xl mb-10">WHO WE WORK WITH</h2>
+      <p class="text-gray-400 max-w-3xl leading-8 mb-6">
+        XCOSMOS collaborates with government agencies, research institutions, academic
+        organizations, industry partners, startups, and innovation ecosystems to design
+        and deploy science-driven intelligent systems.
+      </p>
+      <p class="text-gray-400 leading-8">
+        Our collaborations span policy support, applied research, pilot deployments,
+        technology transfer, and long-term institutional partnerships across environmental,
+        technological, and socio-economic domains.
+      </p>
+    </div>
+
+    <!-- Image -->
+    <div class="relative reveal">
+      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80" alt="Global Collaboration & Partnerships" class="rounded-xl object-cover w-full h-[360px] opacity-90" loading="eager" />
+      <div class="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-transparent rounded-xl"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RESEARCH & INNOVATION -->
+<section id="research" class="py-24 md:py-32 px-6 bg-black/40 border-t border-white/5">
+  <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+
+    <!-- Text -->
+    <div class="reveal">
+      <h2 class="font-brand text-3xl md:text-4xl mb-10">RESEARCH & INNOVATION</h2>
+      <p class="text-gray-400 max-w-3xl leading-8 mb-8">
+        Innovation at XCOSMOS is grounded in research, experimentation, and validation.
+        Our approach emphasizes explainable intelligence, field-tested prototypes,
+        responsible AI practices, and scalable deployment across environmental,
+        industrial, and digital domains.
+      </p>
+
+      <div class="text-gray-400 leading-8">
+        <strong class="text-white">From Research to Deployment</strong><br />
+        Research → Prototyping → Field Validation → Deployment → Decision Support
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div class="relative reveal">
+      <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1600&q=80" alt="Research & Innovation – Space Science & Advanced Research" class="rounded-xl object-cover w-full h-[360px] opacity-90" loading="eager" />
+      <div class="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-transparent rounded-xl"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="relative py-24 md:py-36 px-6 border-t border-white/5 overflow-hidden">
+  <!-- Background Image -->
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=2000&q=80" alt="Earth Observation from Space" class="w-full h-full object-cover opacity-32" loading="eager" />
+    <div class="absolute inset-0 bg-black/70"></div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto">
+    <div class="max-w-3xl mb-20 reveal">
+      <h2 class="font-brand text-3xl md:text-5xl mb-6">PROJECTS & CASE STUDIES</h2>
+      <p class="text-gray-300 leading-8">
+        A selection of applied projects and case studies demonstrating XCOSMOS capabilities
+        in atmospheric science, Earth observation, environmental IoT, robotics, AI, and
+        sustainability‑driven intelligence systems.
+      </p>
+    </div>
+
+    <!-- Project Grid inside background -->
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Urban Heat Island (UHI) assessment using dense IoT sensor arrays integrated with satellite remote sensing and GIS analytics.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Distributed IoT‑based micro‑climate monitoring networks across forest, agricultural, and urban environments.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Autonomous weather station networks for remote and high‑altitude regions with satellite and cellular backhaul.</div>
+
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Atmospheric data fusion platforms integrating IoT observations, satellite data, and numerical weather prediction outputs.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Smart air‑quality monitoring stations measuring PM2.5, PM10, CO, NO₂, and O₃ with edge‑AI enabled AQI forecasting.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Mobile IoT platforms for traffic‑hour air‑pollution hotspot detection and spatio‑temporal analysis.</div>
+
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Autonomous environmental monitoring rovers equipped with meteorological, air‑quality, and soil sensors.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">IoT‑enabled flood early‑warning systems integrating rainfall, river‑level, and soil‑moisture sensors.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Landslide risk monitoring using soil moisture, pore‑pressure sensors, terrain data, and rainfall thresholds.</div>
+
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Drone‑assisted atmospheric and terrain surveys for post‑disaster assessment and environmental mapping.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Smart irrigation and soil‑moisture automation systems optimized for agro‑meteorological conditions.</div>
+      <div class="corp-card p-6 relative overflow-hidden border border-white/10 before:absolute before:inset-0 before:border-t-2 before:border-l-2 before:border-brand-accent before:opacity-60 after:absolute after:inset-0 after:border-b-2 after:border-r-2 after:border-brand-highlight after:opacity-40 hover:before:opacity-100 hover:after:opacity-80 transition-all duration-500">Renewable energy (solar & wind) site feasibility analysis using long‑term meteorological datasets.</div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ED‑TECH & TRAINING -->
+<section id="edtech" class="py-24 md:py-36 px-6 bg-black/40 border-t border-white/5">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header + Image -->
+    <div class="grid lg:grid-cols-2 gap-16 items-center mb-24 reveal">
+      <div>
+        <h2 class="font-brand text-3xl md:text-5xl mb-6">ED‑TECH & TRAINING</h2>
+        <p class="text-gray-400 text-lg leading-relaxed">
+          XCOSMOS functions as a knowledge hub offering advanced workshops, structured
+          training programs, internships, and project mentorship in Atmospheric Science,
+          Robotics, IoT, Artificial Intelligence, Software Systems, and Environmental
+          Technology for students and early‑career researchers.
+        </p>
+        <div class="mt-10">
+          <a href="#contact" class="inline-block px-10 py-4 bg-white text-black text-sm tracking-widest font-semibold hover:bg-brand-accent hover:text-white transition-colors">
+            APPLY FOR TRAINING
+          </a>
+        </div>
+      </div>
+      <div class="relative">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="Next Generation Learning" class="rounded-xl object-cover w-full h-[360px] opacity-90" loading="eager" />
+        <div class="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-transparent rounded-xl"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid md:grid-cols-3 gap-12 mb-24 reveal">
+      <div class="text-center">
+        <p class="font-brand text-4xl text-white counter" data-base="25" data-key="workshops">25</p>
+        <p class="text-gray-400 mt-2 tracking-widest text-sm">WORKSHOPS & PROGRAMS</p>
+      </div>
+      <div class="text-center">
+        <p class="font-brand text-4xl text-white counter" data-base="12" data-key="domains">12</p>
+        <p class="text-gray-400 mt-2 tracking-widest text-sm">TECHNOLOGY DOMAINS</p>
+      </div>
+      <div class="text-center">
+        <p class="font-brand text-4xl text-white counter" data-base="300" data-key="students">300+</p>
+        <p class="text-gray-400 mt-2 tracking-widest text-sm">STUDENTS & RESEARCHERS</p>
+      </div>
+    </div>
+
+    <!-- Learning Focus -->
+    <div class="grid md:grid-cols-2 gap-12">
+      <div>
+        <h3 class="font-brand text-2xl mb-4">Learning Focus Areas</h3>
+        <ul class="space-y-3 text-gray-400 leading-7">
+          <li>• Atmospheric Science & Climate Applications</li>
+          <li>• Robotics, IoT & Embedded Systems</li>
+          <li>• Artificial Intelligence & Machine Learning</li>
+          <li>• Geospatial Intelligence & Remote Sensing</li>
+          <li>• Software Development & Data Analytics</li>
+        </ul>
+      </div>
+
+      <div class="corp-card p-10">
+        <h3 class="font-brand text-xl mb-6">Training Approach</h3>
+        <p class="text-gray-400 leading-8">
+          Our training model emphasizes hands‑on learning, real‑world problem solving,
+          interdisciplinary exposure, and mentorship from domain experts, ensuring
+          participants gain both theoretical understanding and practical experience.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERNSHIPS & FELLOWSHIPS -->
+<section id="internships" class="py-24 md:py-32 px-6 border-t border-white/5">
+  <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+   
+    <!-- Text -->
+    <div class="reveal">
+      <h2 class="font-brand text-3xl md:text-4xl mb-8">INTERNSHIPS & FELLOWSHIPS</h2>
+      <p class="text-gray-400 leading-8 text-lg">
+        XCOSMOS offers structured internships, fellowships, and research mentorship
+        programs for students and early-career professionals in atmospheric science,
+        robotics, IoT, artificial intelligence, software systems, and business analytics.
+      </p>
+      <ul class="mt-8 space-y-3 text-gray-400 leading-7">
+        <li>• Research-oriented internships</li>
+        <li>• Field-based IoT & robotics exposure</li>
+        <li>• Climate & environmental data projects</li>
+        <li>• Industry & academic mentorship</li>
+      </ul>
+    </div>
+
+    <!-- Image -->
+    <div class="relative reveal">
+      <img src="https://images.unsplash.com/photo-1513258496099-48168024aec0" alt="Research Internship" class="rounded-xl object-cover w-full h-[360px] opacity-90" loading="eager" />
+      <div class="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-transparent rounded-xl"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CAREERS -->
+<section id="careers" class="py-24 md:py-36 px-6 bg-black/40 border-t border-white/5">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-20 items-center mb-24 reveal">
+      <div>
+        <h2 class="font-brand text-3xl md:text-5xl mb-6">CAREERS AT XCOSMOS</h2>
+        <p class="text-gray-400 text-lg leading-relaxed">
+          XCOSMOS is continuously looking for passionate individuals who want to work at
+          the intersection of science, technology, environment, business, and innovation.
+          We value curiosity, interdisciplinary thinking, and a strong sense of purpose.
+        </p>
+      </div>
+      <div class="relative">
+        <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d" alt="Careers at XCOSMOS" class="rounded-xl object-cover w-full h-[360px] opacity-90" loading="eager" />
+        <div class="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-transparent rounded-xl"></div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12">
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12">
+      <div>
+        <h3 class="font-brand text-2xl mb-4">Who We Look For</h3>
+        <ul class="space-y-3 text-gray-400 leading-7">
+          <li>• Atmospheric Science & Climate Research professionals</li>
+          <li>• Robotics, IoT & Embedded Systems engineers</li>
+          <li>• Artificial Intelligence & Data Science professionals</li>
+          <li>• Software engineers (Web, Mobile, Cloud & Platforms)</li>
+          <li>• Business analysts, strategy & operations professionals</li>
+          <li>• Digital marketing, growth strategy & market intelligence specialists</li>
+          <li>• Partnerships, program management & client engagement roles</li>
+        </ul>
+      </div>
+
+      <div class="corp-card p-10">
+        <h3 class="font-brand text-xl mb-6">How to Apply</h3>
+        <p class="text-gray-400 leading-8 mb-6">
+          Send your profile, portfolio, or research interests to our official email.
+          Shortlisted candidates will be contacted for further discussions.
+        </p>
+        <p class="text-white font-medium">xcosmos.in@gmail.com</p>
+        <p class="text-gray-500 text-sm mt-2">Subject: Careers @ XCOSMOS</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="py-24 md:py-36 px-6 border-t border-white/5 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-20 reveal max-w-3xl">
+      <h2 class="font-brand text-3xl md:text-5xl mb-6">GLOBAL OPERATING UNITS</h2>
+      <p class="text-gray-400 text-lg leading-relaxed">
+        XCOSMOS operates as a decentralized, multidisciplinary collective. Our organizational structure is designed for agility, scientific rigor, and rapid deployment of intelligent systems across key operational domains.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+       <!-- Unit 1: Executive -->
+       <div class="corp-card p-10 reveal border-t-2 border-brand-accent group">
+          <div class="h-14 w-14 bg-brand-accent/10 rounded-lg flex items-center justify-center mb-8 text-brand-accent group-hover:bg-brand-accent group-hover:text-black transition-colors duration-500">
+            <i data-lucide="shield-check" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-brand text-2xl text-white mb-2">Executive Council</h3>
+          <p class="text-xs tracking-widest text-gray-500 uppercase mb-5 font-semibold">Global Strategy & Governance</p>
+          <p class="text-gray-400 leading-7">
+            Responsible for the overarching vision, international partnerships, policy alignment, and high-level decision-making that drives the ecosystem forward.
+          </p>
+       </div>
+
+       <!-- Unit 2: Research -->
+       <div class="corp-card p-10 reveal border-t-2 border-brand-highlight group">
+          <div class="h-14 w-14 bg-brand-highlight/10 rounded-lg flex items-center justify-center mb-8 text-brand-highlight group-hover:bg-brand-highlight group-hover:text-black transition-colors duration-500">
+             <i data-lucide="flask-conical" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-brand text-2xl text-white mb-2">Science & Research</h3>
+          <p class="text-xs tracking-widest text-gray-500 uppercase mb-5 font-semibold">Atmospheric & Earth Observation</p>
+          <p class="text-gray-400 leading-7">
+             A dedicated team of researchers and domain experts focused on climate data analysis, satellite imagery interpretation, and environmental modeling.
+          </p>
+       </div>
+
+       <!-- Unit 3: Engineering -->
+       <div class="corp-card p-10 reveal border-t-2 border-brand-accent group">
+          <div class="h-14 w-14 bg-brand-accent/10 rounded-lg flex items-center justify-center mb-8 text-brand-accent group-hover:bg-brand-accent group-hover:text-black transition-colors duration-500">
+             <i data-lucide="cpu" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-brand text-2xl text-white mb-2">Systems Engineering</h3>
+          <p class="text-xs tracking-widest text-gray-500 uppercase mb-5 font-semibold">Robotics, IoT & Hardware</p>
+          <p class="text-gray-400 leading-7">
+             Engineers building the physical layer of our intelligence—designing autonomous rovers, sensor networks, drone systems, and edge-computing infrastructure.
+          </p>
+       </div>
+
+       <!-- Unit 4: Intelligence -->
+       <div class="corp-card p-10 reveal border-t-2 border-brand-highlight group">
+          <div class="h-14 w-14 bg-brand-highlight/10 rounded-lg flex items-center justify-center mb-8 text-brand-highlight group-hover:bg-brand-highlight group-hover:text-black transition-colors duration-500">
+             <i data-lucide="brain-circuit" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-brand text-2xl text-white mb-2">Artificial Intelligence</h3>
+          <p class="text-xs tracking-widest text-gray-500 uppercase mb-5 font-semibold">Data Science & Algorithms</p>
+          <p class="text-gray-400 leading-7">
+             Developing the neural architecture of XCOSMOS—creating machine learning models, predictive engines, and automated decision-support systems.
+          </p>
+       </div>
+
+       <!-- Unit 5: Platforms -->
+       <div class="corp-card p-10 reveal border-t-2 border-brand-accent group">
+          <div class="h-14 w-14 bg-brand-accent/10 rounded-lg flex items-center justify-center mb-8 text-brand-accent group-hover:bg-brand-accent group-hover:text-black transition-colors duration-500">
+             <i data-lucide="globe" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-brand text-2xl text-white mb-2">Digital Platforms</h3>
+          <p class="text-xs tracking-widest text-gray-500 uppercase mb-5 font-semibold">Software & Cloud Infrastructure</p>
+          <p class="text-gray-400 leading-7">
+             Architects of our digital presence, creating scalable web systems, enterprise dashboards, APIs, and cloud-native environments for global data access.
+          </p>
+       </div>
+
+       <!-- Unit 6: Operations -->
+       <div class="corp-card p-10 reveal border-t-2 border-brand-highlight group">
+          <div class="h-14 w-14 bg-brand-highlight/10 rounded-lg flex items-center justify-center mb-8 text-brand-highlight group-hover:bg-brand-highlight group-hover:text-black transition-colors duration-500">
+             <i data-lucide="briefcase" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-brand text-2xl text-white mb-2">Business Operations</h3>
+          <p class="text-xs tracking-widest text-gray-500 uppercase mb-5 font-semibold">Growth, Marketing & Branding</p>
+          <p class="text-gray-400 leading-7">
+             The bridge between technology and society—managing market intelligence, global communications, and sustainable business growth strategies.
+          </p>
+       </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP / PRODUCTS -->
+<section id="shop" class="py-24 md:py-36 px-6 bg-black/40 border-t border-white/5 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-20 reveal max-w-3xl">
+      <h2 class="font-brand text-3xl md:text-5xl mb-6">XCOSMOS STORE</h2>
+      <p class="text-gray-400 text-lg leading-relaxed">
+        Access premium engineered hardware, sustainable agro-products, and research-grade systems directly from the XCOSMOS ecosystem.
+      </p>
+    </div>
+
+    <!-- Shop Categories Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      
+      <!-- Category 1: Robotics -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=600&q=80" alt="Robotics" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Robotics</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Autonomous rover kits, educational robot arms, and servo motor packs for research and learning.</p>
+        <button onclick="enquireProduct('Robotics Products (Rover kits, Arms, Servos)')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 2: IoT & Sensors -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80" alt="IoT Systems" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">IoT & Sensors</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Smart weather stations, air quality sensors, soil moisture probes, and ESP32 development boards.</p>
+        <button onclick="enquireProduct('IoT & Sensor Systems')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 3: Electronics -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&w=800&q=80" alt="Electronics" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Electronics</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Microcontrollers, custom PCBs, specialized modules, and hardware components for prototyping.</p>
+        <button onclick="enquireProduct('Electronics Components & Modules')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 4: Sustainable Produce -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80" alt="Sustainable Produce" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Organic & Herbal</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Premium organic spices, rare ayurvedic seeds, medicinal plant saplings, and sustainable agro-products.</p>
+        <button onclick="enquireProduct('Organic & Herbal Products')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 5: Drones & Aerial Systems -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=800&q=80" alt="Drones" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Drones & Aerial</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Flight controllers, BLDC motors, drone frames, and FPV systems for environmental monitoring.</p>
+        <button onclick="enquireProduct('Drones & Aerial Systems')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 6: Renewable Energy -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=600&q=80" alt="Energy" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Renewable Energy</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Mini solar panels, wind turbine education kits, and battery management modules.</p>
+        <button onclick="enquireProduct('Renewable Energy Kits')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 7: 3D Printing -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1631541909061-71e349d1f203?auto=format&fit=crop&w=800&q=80" alt="3D Printing" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">3D Printing</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">PLA filaments, nozzles, stepper motors, and components for rapid prototyping.</p>
+        <button onclick="enquireProduct('3D Printing Supplies')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 8: Data & Software -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" alt="Data" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Data & Software</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Climate datasets, weather model API keys, and specialized scientific simulation software.</p>
+        <button onclick="enquireProduct('Data & Software Services')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 9: Astronomy -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=600&q=80" alt="Astronomy" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Astronomy & Optics</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Telescopes, lenses, star trackers, and optical instruments for sky observation.</p>
+        <button onclick="enquireProduct('Astronomy & Optics')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 10: Travel & Adventure Kits -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&w=600&q=80" alt="Travel Gear" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Travel & Adventure Kits</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Mountaineering gear, survival kits, rugged backpacks, and eco-friendly travel essentials.</p>
+        <button onclick="enquireProduct('Travel & Adventure Kits')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 11: Embedded System Design -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1553406830-ef2513450d76?auto=format&fit=crop&w=800&q=80" alt="Embedded Systems" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Embedded Systems</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Custom PCB design, firmware engineering, and industrial embedded solutions.</p>
+        <button onclick="enquireProduct('Embedded System Design Services')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 12: 3D Modeling & Design -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80" alt="3D Modeling" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">3D Modeling & Design</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">CAD modeling, industrial product design, and photorealistic rendering services.</p>
+        <button onclick="enquireProduct('3D Modeling & Design Services')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW PRODUCTS</button>
+      </div>
+
+      <!-- Category 13: Custom Software & Web Solutions -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=600&q=80" alt="Software Design" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Software & Web Design</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Enterprise software, responsive web design, UI/UX solutions, and custom digital platforms.</p>
+        <button onclick="enquireProduct('Custom Software & Web Design')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW SERVICES</button>
+      </div>
+
+      <!-- Category 14: Game & Mobile App Development -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=600&q=80" alt="App Dev" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">App & Game Dev</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">Native iOS/Android apps, cross-platform solutions, and immersive game development (Unity/Unreal).</p>
+        <button onclick="enquireProduct('Mobile App & Game Development')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW SERVICES</button>
+      </div>
+
+      <!-- Category 15: Generative AI Video & Media -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-accent/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80" alt="AI Video" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Generative AI Media</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">AI-generated commercial ads, deep-fake avatars for branding, and automated video content pipelines.</p>
+        <button onclick="enquireProduct('Generative AI Video Production')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-accent hover:border-brand-accent transition">VIEW SERVICES</button>
+      </div>
+
+      <!-- Category 16: Startup Incubation & Strategy -->
+      <div class="corp-card p-6 reveal group cursor-pointer hover:border-brand-highlight/50">
+        <div class="h-48 w-full mb-6 overflow-hidden rounded-lg bg-black/50 relative">
+          <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80" alt="Startup Strategy" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 font-brand text-xl text-white">Startup Incubation</div>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">End-to-end startup consulting, pitch deck creation, MVP development strategies, and go-to-market roadmaps.</p>
+        <button onclick="enquireProduct('Startup Incubation & Strategy Services')" class="w-full py-2 border border-white/20 text-xs tracking-widest text-white hover:bg-brand-highlight hover:border-brand-highlight transition">VIEW SERVICES</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-24 md:py-40 px-6 bg-gradient-to-b from-black via-[#070a12] to-black border-t border-white/10 relative overflow-hidden">
+  <!-- Contact background image -->
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=2000&q=80" class="w-full h-full object-cover opacity-25" />
+    <div class="absolute inset-0 bg-black/70"></div>
+  </div>
+
+  <div class="relative max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="mb-24 max-w-3xl reveal">
+      <h2 class="font-brand text-3xl md:text-5xl mb-6">Contact XCOSMOS</h2>
+      <p class="text-gray-300 text-lg leading-relaxed">
+        For collaborations, research partnerships, consulting enquiries, or institutional
+        engagement, connect with XCOSMOS through the channels below.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-20">
+
+      <!-- Official Information -->
+      <div class="space-y-10">
+        <div>
+          <p class="text-xs tracking-[0.25em] text-gray-500 uppercase mb-2">Registered Location</p>
+          <p class="text-base text-white">Kerala, India</p>
+        </div>
+
+        <div>
+          <p class="text-xs tracking-[0.25em] text-gray-500 uppercase mb-2">Official Email</p>
+          <a href="mailto:xcosmos.in@gmail.com" class="text-base text-white hover:text-brand-accent transition-colors">
+            xcosmos.in@gmail.com
+          </a>
+        </div>
+
+        <div>
+          <p class="text-xs tracking-[0.25em] text-gray-500 uppercase mb-2">Website</p>
+          <a href="https://www.xcosmos.in" target="_blank" class="text-base text-white hover:text-brand-accent transition-colors">
+            www.xcosmos.in
+          </a>
+        </div>
+
+        <div>
+          <p class="text-xs tracking-[0.25em] text-gray-500 uppercase mb-2">Contact Numbers</p>
+          <p class="text-base text-white">+91 62826 11911</p>
+          <p class="text-base text-white">+91 85890 80921</p>
+        </div>
+      </div>
+
+      <!-- Key Contacts -->
+      <div class="space-y-10">
+        <div>
+          <p class="text-xs tracking-[0.25em] text-gray-500 uppercase mb-2">Leadership Contact</p>
+          <p class="font-brand text-lg text-white">Midhun K Gopakumar</p>
+          <p class="text-gray-400">Founder & Chief Executive Officer</p>
+        </div>
+
+        <div>
+          <p class="text-xs tracking-[0.25em] text-gray-500 uppercase mb-2">Business & Partnerships</p>
+          <p class="font-brand text-lg text-white">Arun A N</p>
+          <p class="text-gray-400">Chief Marketing Officer</p>
+        </div>
+      </div>
+
+      <!-- Enquiry Form -->
+      <div class="corp-card p-0 overflow-hidden rounded-xl border border-white/10">
+        <!-- Form Header Image -->
+        <div class="relative h-40">
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80" alt="Contact XCOSMOS" class="w-full h-full object-cover opacity-90" />
+          <div class="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/40 to-transparent"></div>
+          <div class="absolute bottom-4 left-6">
+            <h3 class="font-brand text-xl text-white tracking-widest">ENQUIRY FORM</h3>
+            <p class="text-xs text-gray-300 tracking-widest mt-1">CONNECT WITH XCOSMOS</p>
+          </div>
+        </div>
+
+        <!-- Form Body -->
+        <div class="p-10">
+          <form id="enquiryForm" class="space-y-6">
+            <!-- Honeypot (spam protection) -->
+            <input type="text" name="company" tabindex="-1" autocomplete="off" class="hidden" />
+           
+            <div>
+              <label class="block text-xs tracking-widest text-gray-400 mb-2">Name</label>
+              <input type="text" name="name" required class="w-full bg-black border border-white/10 px-4 py-3 text-white focus:border-brand-accent outline-none text-base" />
+            </div>
+            <div>
+              <label class="block text-xs tracking-widest text-gray-400 mb-2">Email</label>
+              <input type="email" name="email" required class="w-full bg-black border border-white/10 px-4 py-3 text-white focus:border-brand-accent outline-none text-base" />
+            </div>
+           
+            <div>
+              <label class="block text-xs tracking-widest text-gray-400 mb-2">Message</label>
+              <textarea name="message" rows="5" required class="w-full bg-black border border-white/10 px-4 py-3 text-white focus:border-brand-accent outline-none text-base" placeholder="Write your message here..."></textarea>
+            </div>
+
+            <!-- Submit centered -->
+            <div class="flex justify-center pt-6">
+              <button type="submit" class="inline-flex items-center justify-center px-10 py-3 bg-white text-black text-xs tracking-widest font-semibold uppercase hover:bg-brand-accent hover:text-white transition-all duration-300 rounded-full shadow-lg hover:shadow-brand-accent/40">
+                Send Enquiry
+              </button>
+            </div>
+            <p id="formStatus" class="text-sm text-center mt-4 hidden"></p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-white/10 bg-black">
+  <!-- Status Bar -->
+  <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-gray-500 tracking-widest">
+    <div class="flex items-center gap-4">
+      <span class="w-2 h-2 rounded-full bg-green-500"></span>
+      <span>SYSTEM STATUS: OPERATIONAL</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-6">
+      <span>DATA • SCIENCE • INTELLIGENCE</span>
+      <span class="opacity-40">|</span>
+      <span>GLOBAL OPERATIONS</span>
+    </div>
+  </div>
+
+  <!-- Leadership Summary (Footer) -->
+  <div class="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-2 gap-8 text-sm text-gray-400 border-b border-white/10">
+    <div>
+      <p class="font-brand text-white tracking-widest mb-2">Midhun K Gopakumar</p>
+      <p class="text-xs tracking-[0.25em] text-brand-accent mb-3">FOUNDER & CEO</p>
+      <p>Atmospheric Science · Robotics · AI · IoT</p>
+    </div>
+    <div>
+      <p class="font-brand text-white tracking-widest mb-2">Arun A N</p>
+      <p class="text-xs tracking-[0.25em] text-brand-highlight mb-3">CHIEF MARKETING OFFICER</p>
+      <p>Strategy · Partnerships · Global Branding</p>
+    </div>
+  </div>
+
+  <!-- Footer Main -->
+  <div class="max-w-7xl mx-auto px-6 py-10 grid md:grid-cols-4 gap-12 text-sm text-gray-400">
+    <div>
+      <p class="font-brand tracking-widest text-white mb-3">XCOSMOS</p>
+      <p class="leading-relaxed">
+        An international science and technology ecosystem delivering intelligent systems
+        for Earth, industry, and data-driven decision-making.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs tracking-[0.3em] uppercase text-gray-500 mb-4">Quick Links</p>
+      <ul class="space-y-2">
+        <li><a href="#about" class="hover:text-white">About</a></li>
+        <li><a href="#capabilities" class="hover:text-white">Capabilities</a></li>
+        <li><a href="#projects" class="hover:text-white">Projects</a></li>
+        <li><a href="#contact" class="hover:text-white">Contact</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="text-xs tracking-[0.3em] uppercase text-gray-500 mb-4">Social Presence</p>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3">
+          <i data-lucide="linkedin" class="w-4 h-4"></i>
+          <a href="https://www.linkedin.com/in/midhun-k-gopakumar" target="_blank" class="hover:text-white">LinkedIn · Midhun K Gopakumar</a>
+        </li>
+        <li class="flex items-center gap-3">
+          <i data-lucide="instagram" class="w-4 h-4"></i>
+          <a href="https://www.instagram.com/_x_cosmos" target="_blank" class="hover:text-white">Instagram · _x_cosmos</a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="text-xs tracking-[0.3em] uppercase text-gray-500 mb-4">Compliance & Info</p>
+      <ul class="space-y-2">
+        <li>Data Ethics & Responsible AI</li>
+        <li>Sustainability & Environmental Responsibility</li>
+        <li>Transparency & Information Security</li>
+        <li>Privacy & Information Security</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Copyright -->
+  <div class="border-t border-white/5 py-6 text-center text-xs text-gray-600 tracking-widest">
+    © 2025 XCOSMOS — GLOBAL DIGITAL ECOSYSTEM · Based in India, Collaborating Globally
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+
+  /* Scroll reveal (SUPER FAST & OPTIMIZED) */
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){ 
+        entry.target.classList.add('active'); 
+        // Stop observing once active to save resources
+        observer.unobserve(entry.target);
+      }
+    });
+  },{threshold: 0, rootMargin: "200px"}); // Trigger before element enters viewport
+  reveals.forEach(r=>observer.observe(r));
+
+  /* Cursor glow animation */
+  const glow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', e => {
+    // Optimized animation frame for smooth visual updates
+    requestAnimationFrame(() => {
+        glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    });
+  });
+
+  /* ===== PRODUCT DISPLAY LOGIC ===== */
+  function toggleProducts(category) {
+    // Hide all lists first
+    const allLists = document.querySelectorAll('.product-list');
+    allLists.forEach(list => list.classList.add('hidden-force'));
+
+    // Show selected list
+    const selectedList = document.getElementById('products-' + category);
+    if(selectedList) {
+      selectedList.classList.remove('hidden-force');
+      
+      // Scroll to product display area
+      const displayArea = document.getElementById('product-display-area');
+      displayArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  /* ===== ENQUIRE BUTTON LOGIC ===== */
+  function enquireProduct(productName) {
+    const contactSection = document.getElementById('contact');
+    const msgBox = document.querySelector('textarea[name="message"]');
+    
+    // Scroll to contact form
+    contactSection.scrollIntoView({ behavior: 'smooth' });
+    
+    // Fill message box
+    setTimeout(() => {
+      msgBox.value = `I am interested in purchasing: ${productName}. Please provide pricing and availability details.`;
+      msgBox.focus();
+    }, 800); // Small delay to allow scroll to complete
+  }
+
+  /* ===== MOBILE MENU LOGIC ===== */
+  function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenu.classList.toggle('hidden');
+  }
+</script>
+
+<script>
+  const enquiryForm = document.getElementById('enquiryForm');
+  const statusMsg = document.getElementById('formStatus');
+
+  enquiryForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    statusMsg.classList.remove('hidden');
+    statusMsg.textContent = 'Sending enquiry...';
+    statusMsg.className = 'text-sm text-center mt-4 text-gray-400';
+
+    // Honeypot check
+    if (enquiryForm.company && enquiryForm.company.value) {
+      statusMsg.textContent = 'Submission blocked.';
+      statusMsg.className = 'text-sm text-center mt-4 text-red-400';
+      return;
+    }
+
+    emailjs.send(
+      'service_ru7eu1h',
+      'template_zph2vrr',
+      {
+        name: enquiryForm.name.value,
+        email: enquiryForm.email.value,
+        message: enquiryForm.message.value
+      }
+    )
+    .then(() => {
+      statusMsg.textContent = 'Thank you! Your enquiry has been sent successfully.';
+      statusMsg.className = 'text-sm text-center mt-4 text-green-400';
+      enquiryForm.reset();
+    })
+    .catch((error) => {
+      console.error('EmailJS error:', error);
+      statusMsg.textContent = 'Failed to send enquiry. Please try again later.';
+      statusMsg.className = 'text-sm text-center mt-4 text-red-400';
+    });
+  });
+</script>
+
+<script>
+  /* ===== DAILY AUTO-INCREMENT COUNTERS (CLIENT-SIDE) ===== */
+  (function () {
+    const today = new Date().toISOString().slice(0, 10);
+    const lastDate = localStorage.getItem('xcosmos_counter_date');
+
+    const counters = document.querySelectorAll('.counter');
+
+    counters.forEach(counter => {
+      const base = parseInt(counter.dataset.base, 10);
+      const key = 'xcosmos_' + counter.dataset.key;
+      let value = parseInt(localStorage.getItem(key), 10);
+
+      if (isNaN(value)) value = base;
+
+      // Increase once per day
+      if (lastDate !== today) {
+        value += 1;
+        localStorage.setItem(key, value);
+      }
+
+      // Display value
+      counter.textContent = counter.textContent.includes('+') ? value + '+' : value;
+    });
+
+    localStorage.setItem('xcosmos_counter_date', today);
+  })();
+</script>
+</body>
+</html>
