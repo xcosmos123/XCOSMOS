@@ -420,7 +420,25 @@
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(e) {}
 
-            startSystemLogic();
+            // 2. FORCE AUDIO HARDWARE WAKE-UP (Fixes Speakerphone/Built-in Mic issue)
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                }).then(stream => {
+                    // Success: Hardware is ready. Close stream so SpeechRecognition can take over.
+                    stream.getTracks().forEach(track => track.stop());
+                    startSystemLogic();
+                }).catch(err => {
+                    console.warn("Hardware warmup failed, trying fallback:", err);
+                    startSystemLogic();
+                });
+            } else {
+                startSystemLogic();
+            }
         }
 
         function startSystemLogic() {
