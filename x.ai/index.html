@@ -124,6 +124,8 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 5vh;
+            cursor: pointer; /* Indicates it is clickable */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .ring {
@@ -132,6 +134,7 @@
             border: 2px solid transparent;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
             transition: all 0.5s ease;
+            pointer-events: none; /* Let clicks pass to core */
         }
 
         .ring-1 { width: 100%; height: 100%; border-top: 1px solid rgba(0, 243, 255, 0.8); border-bottom: 1px solid rgba(0, 243, 255, 0.8); box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); animation: spin 20s linear infinite; }
@@ -146,6 +149,11 @@
             box-shadow: 0 0 60px #00f3ff;
             animation: pulse 4s infinite ease-in-out;
             z-index: 2;
+        }
+
+        .arc-reactor:active .core {
+            transform: scale(0.9);
+            box-shadow: 0 0 80px #ffffff;
         }
 
         .arc-reactor.listening .core { background: radial-gradient(circle, #fff 0%, #ff0055 30%, transparent 80%); box-shadow: 0 0 80px #ff0055; animation: pulse-fast 1s infinite ease-in-out; }
@@ -165,6 +173,15 @@
             margin-top: 10px;
             text-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
             text-align: center;
+        }
+        
+        #instruction-text {
+            font-family: 'Rajdhani';
+            font-size: 12px;
+            color: rgba(0, 243, 255, 0.6);
+            margin-top: 5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
         
         /* LIVE CLOCK - Mobile Adjusted */
@@ -286,11 +303,13 @@
         <div style="font-size: 12px; letter-spacing: 4px; color: #bc13fe; margin-bottom: 30px; text-transform: uppercase;">XCOSMOS Core Intelligence</div>
         <button id="start-btn" onclick="initializeSystem()">INITIALIZE</button>
         <div style="margin-top: 30px; color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px;">ESTABLISHING LINK</div>
+        <div style="margin-top: 10px; color: #ff0055; font-size: 10px; display:none;" id="https-warning">⚠ MUST USE HTTPS OR LOCALHOST</div>
     </div>
 
     <!-- MAIN HUD -->
     <div id="hud-container">
-        <div class="arc-reactor" id="reactor">
+        <!-- CLICKABLE REACTOR FOR MOBILE -->
+        <div class="arc-reactor" id="reactor" onclick="toggleMicManual()">
             <div class="ring ring-1"></div>
             <div class="ring ring-2"></div>
             <div class="ring ring-3"></div>
@@ -299,6 +318,7 @@
         </div>
         
         <div id="status-text">SYSTEM STANDBY</div>
+        <div id="instruction-text">TAP CORE TO SPEAK</div>
         
         <div class="visualizer" id="wave-viz">
             <div class="bar" style="animation-delay: 0s"></div>
@@ -345,15 +365,22 @@
         // ================= CONFIGURATION =================
         const API_KEYS = [
             "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",
-            "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"
+            "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",
+            "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",
+            "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"
         ];
         let apiKeyIndex = 0; 
 
-        // MULTI-CORE REDUNDANCY
+        // MULTI-CORE REDUNDANCY (EXPANDED)
         const NEURAL_CORES = [
             "xiaomi/mimo-v2-flash:free",
             "google/gemini-2.0-flash-exp:free",
-            "google/gemma-3-27b-it:free"
+            "google/gemma-3-27b-it:free",
+            "meta-llama/llama-3-8b-instruct:free",
+            "microsoft/phi-3-mini-128k-instruct:free",
+            "mistralai/mistral-7b-instruct:free",
+            "huggingfaceh4/zephyr-7b-beta:free",
+            "openchat/openchat-7b:free"
         ];
 
         let currentCoreIndex = 0; 
@@ -381,9 +408,12 @@
         let isListening = false;
         let isProcessing = false; // Prevents mic from restarting while thinking
         let isAISpeaking = false; // Prevents mic from restarting while speaking
-        let isMicRunning = false; // Tracks browser speech state
         let audioCtx = null;
-        let watchdogTimer = null;
+        
+        // CHECK PROTOCOL
+        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.protocol !== 'file:') {
+            document.getElementById('https-warning').style.display = 'block';
+        }
 
         // ================= INITIALIZATION =================
         function initializeSystem() {
@@ -397,26 +427,20 @@
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(e) {}
 
-            // 2. Explicit Mic Permission Request (Hardware Fix)
+            // 2. FORCE AUDIO HARDWARE WAKE-UP (Fixes Speakerphone/Built-in Mic issue)
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                console.log("Requesting Hardware Access...");
-                navigator.mediaDevices.getUserMedia({ 
-                    audio: { 
-                        echoCancellation: true, 
+                navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
                         noiseSuppression: true,
                         autoGainControl: true
-                    } 
+                    }
                 }).then(stream => {
-                    console.log("Hardware Mic Active");
-                    setTimeout(() => {
-                        stream.getTracks().forEach(track => track.stop());
-                    }, 500); 
-                    
+                    // Success: Hardware is ready. Close stream so SpeechRecognition can take over.
+                    stream.getTracks().forEach(track => track.stop());
                     startSystemLogic();
-                })
-                .catch(err => {
-                    console.error("Hardware Mic Error:", err);
-                    alert("ASHNA requires microphone access. Please enable permissions.");
+                }).catch(err => {
+                    console.warn("Hardware warmup failed (Silent Fail)", err);
                     startSystemLogic();
                 });
             } else {
@@ -425,19 +449,37 @@
         }
 
         function startSystemLogic() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("Voice features not supported. Text mode only.");
-            }
-
             isSystemActive = true;
             document.getElementById('status-text').innerText = "ONLINE";
             
             playSound("startup");
-            startContinuousListening();
             startClock();
             
-            speak("We are online, Boss. Systems check complete.");
+            // On Mobile, we often can't auto-start listening without direct interaction immediately preceding.
+            // We try, but if it fails, the user must tap the reactor.
+            tryStartListening();
+
+            speak("Systems online. Tap the reactor to activate voice.");
+        }
+
+        // ================= MANUAL TRIGGER (MOBILE FIX) =================
+        function toggleMicManual() {
+            if(!isSystemActive) return;
+
+            // FIX: Force Stop any active speech to clear audio channel for Mic
+            if(window.speechSynthesis) window.speechSynthesis.cancel();
+            isAISpeaking = false;
+
+            // 1. Resume Audio Context again (iOS requirement)
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+            if(isListening) {
+                stopListening();
+                playSound("processing"); // sound for off
+            } else {
+                document.getElementById('instruction-text').innerText = "INITIALIZING MIC...";
+                tryStartListening();
+            }
         }
 
         // ================= SOUND EFFECTS =================
@@ -489,9 +531,6 @@
             const text = input.value.trim();
             if (text) {
                 input.value = "";
-                // Keep chat open
-                console.log("Typed:", text);
-                
                 // Stop mic while processing text command
                 stopListening();
                 
@@ -503,51 +542,92 @@
         }
 
         // ================= SPEECH RECOGNITION =================
+        // Support for both standard and WebKit (iOS)
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-IN'; 
-        recognition.continuous = false; 
-        recognition.interimResults = false;
+        let recognition = null;
 
-        function safeStartRecognition() {
-            if (!isListening) return; 
-            
-            if (isMicRunning) return;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-IN'; 
+            recognition.continuous = false; // Mobile friendly: stop after one sentence
+            recognition.interimResults = false;
 
-            try {
-                const p = recognition.start();
-                if (p && typeof p.catch === 'function') {
-                    p.catch((e) => {
-                        if (e.name !== 'InvalidStateError') console.error("Mic start rejected:", e);
-                    });
-                }
+            recognition.onstart = () => { 
+                isListening = true;
                 updateStatus("LISTENING");
-            } catch (e) {
-                if (e.name !== 'InvalidStateError') {
-                    console.error("Mic start error:", e);
+                playSound("listening"); 
+            }
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                console.log("Heard:", transcript);
+
+                isProcessing = true;
+                stopListening(); // Ensure logical stop
+
+                updateStatus("PROCESSING");
+                playSound("processing");
+                setVisuals(true);
+                handleCommand(transcript); 
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                if(!isProcessing && !isAISpeaking) {
+                     updateStatus("STANDBY");
                 }
+            };
+            
+            recognition.onerror = (event) => {
+                isListening = false;
+                console.warn("Recognition error:", event.error);
+                
+                // SILENT FAIL & RECOVERY
+                if(event.error === 'not-allowed') {
+                    // Only alert if permission is strictly denied
+                    // But user asked to suppress error, so we just show status
+                    updateStatus("MIC LOCKED");
+                } else if (event.error === 'network') {
+                     // Silent retry handled by status
+                } else if (event.error === 'no-speech') {
+                    updateStatus("STANDBY");
+                    return;
+                } else if (event.error === 'aborted') {
+                    updateStatus("STANDBY");
+                    return;
+                }
+                
+                // Do NOT alert/speak error. Just update status text.
+                updateStatus("OFFLINE");
+            };
+        } else {
+             // Fallback for incompatible browsers
+             console.log("Voice Not Supported");
+        }
+
+        function tryStartListening() {
+            if (!recognition || isListening || isProcessing || isAISpeaking) return;
+            
+            try {
+                recognition.start();
+            } catch (e) {
+                // Silent fail
             }
         }
 
-        function startContinuousListening() {
-            if (!isSystemActive) return;
-            isListening = true;
-            document.getElementById('mic-status').innerText = "LISTENING...";
-            document.getElementById('mic-status').classList.add('listening');
-            safeStartRecognition();
-        }
-
         function stopListening() {
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
             isListening = false;
-            try { recognition.stop(); } catch(e) {}
-            document.getElementById('mic-status').innerText = "OFFLINE";
-            document.getElementById('mic-status').classList.remove('listening');
+            updateStatus("STANDBY");
         }
 
         function updateStatus(status) {
             const text = document.getElementById('status-text');
             const reactor = document.getElementById('reactor');
             const micStatus = document.getElementById('mic-status');
+            const instruct = document.getElementById('instruction-text');
 
             text.innerText = status;
 
@@ -556,51 +636,27 @@
                 text.style.color = "#ff0055"; 
                 micStatus.innerText = "LISTENING";
                 micStatus.classList.add('listening');
-            } else if (status === "PROCESSING" || status === "SPEAKING") {
+                instruct.innerText = "TAP TO STOP";
+            } else if (status === "PROCESSING" || status === "SPEAKING" || status === "REROUTING") {
                 reactor.classList.remove('listening');
                 text.style.color = "#00f3ff"; 
                 micStatus.innerText = "BUSY";
                 micStatus.classList.remove('listening');
+                instruct.innerText = "PROCESSING...";
+            } else if (status === "OFFLINE" || status === "MIC LOCKED") {
+                reactor.classList.remove('listening');
+                text.style.color = "#555"; 
+                micStatus.innerText = "OFFLINE";
+                micStatus.classList.remove('listening');
+                instruct.innerText = "TAP TO REBOOT";
             } else {
                 reactor.classList.remove('listening');
                 text.style.color = "rgba(255, 255, 255, 0.5)";
                 micStatus.innerText = "STANDBY";
                 micStatus.classList.remove('listening');
+                instruct.innerText = "TAP CORE TO SPEAK";
             }
         }
-
-        recognition.onstart = () => { 
-            isMicRunning = true;
-            if (isListening) playSound("listening"); 
-        }
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript.toLowerCase().trim();
-            console.log("Heard:", transcript);
-
-            // STOP MIC IMMEDIATELY TO PREVENT ECHO
-            isProcessing = true;
-            try { recognition.stop(); } catch(e) {}
-
-            updateStatus("PROCESSING");
-            playSound("processing");
-            setVisuals(true);
-            handleCommand(transcript); 
-        };
-
-        recognition.onend = () => {
-            isMicRunning = false;
-            // Only restart if listening mode is ON and AI is NOT busy
-            if (isListening && !isProcessing && !isAISpeaking) {
-                setTimeout(safeStartRecognition, 100); 
-            }
-        };
-        
-        recognition.onerror = (event) => {
-            if (event.error !== 'no-speech' && event.error !== 'aborted') {
-                console.warn("Recognition error:", event.error);
-            }
-        };
 
         // ================= LOGIC & ACTIONS =================
         function handleCommand(transcript) {
@@ -619,13 +675,13 @@
                 speak("YouTube loaded.");
                 return;
             }
-            if (transcript.includes("stop")) {
+            if (transcript.includes("stop") || transcript.includes("cancel")) {
                 isProcessing = false;
                 stopListening();
                 speak("Standing by.");
                 return;
             }
-            if (transcript.includes("open chat") || transcript.includes("pen chat") || transcript.includes("show logs")) {
+            if (transcript.includes("open chat") || transcript.includes("show logs")) {
                 isProcessing = false;
                 if (!isChatOpen) toggleChat();
                 speak("System logs displayed.");
@@ -642,19 +698,28 @@
             sendCommand(transcript); 
         }
 
-        // ================= AI CORE =================
+        // ================= AI CORE (ROBUST FAILOVER) =================
         async function sendCommand(userText) {
             addLog(userText, 'user-msg');
 
             let success = false;
             let attempts = 0;
             let aiText = "";
+            
+            // Limit total retries to prevent infinite loops (Models * Keys * 2)
+            const maxAttempts = NEURAL_CORES.length * API_KEYS.length + 2;
 
-            while (!success && attempts < NEURAL_CORES.length) {
+            while (!success && attempts < maxAttempts) {
                 try {
-                    const model = NEURAL_CORES[(currentCoreIndex + attempts) % NEURAL_CORES.length];
-                    const currentKey = API_KEYS[apiKeyIndex % API_KEYS.length];
+                    // Rotate Models & Keys intelligently
+                    const modelIndex = (currentCoreIndex + attempts) % NEURAL_CORES.length;
+                    const keyIndex = (apiKeyIndex + Math.floor(attempts / NEURAL_CORES.length)) % API_KEYS.length;
+
+                    const model = NEURAL_CORES[modelIndex];
+                    const currentKey = API_KEYS[keyIndex];
                     
+                    if(attempts > 0) updateStatus("REROUTING");
+
                     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                         method: "POST",
                         headers: {
@@ -673,17 +738,24 @@
                     });
                     
                     if (!response.ok) {
-                        if(response.status === 402 || response.status === 401 || response.status === 429) apiKeyIndex++; 
-                        throw new Error(`API Fail`);
+                        // Silent Failure - Throw to catch block to trigger next attempt
+                        throw new Error(`Status ${response.status}`);
                     }
                     
                     const data = await response.json();
-                    aiText = data.choices[0].message.content;
-                    success = true;
-                    currentCoreIndex = (currentCoreIndex + attempts) % NEURAL_CORES.length; 
+                    if(data.choices && data.choices[0]) {
+                        aiText = data.choices[0].message.content;
+                        success = true;
+                        // Save the working index for next time
+                        currentCoreIndex = modelIndex;
+                        apiKeyIndex = keyIndex;
+                    } else {
+                        throw new Error("Invalid Format");
+                    }
 
                 } catch (e) {
                     attempts++;
+                    // Continue loop to try next model/key
                 }
             }
 
@@ -691,15 +763,15 @@
             isProcessing = false;
 
             if (success) {
-                updateStatus("ONLINE"); // Will be overwritten by speak
+                updateStatus("ONLINE"); 
                 addLog(aiText, 'ashna-msg');
                 speak(aiText);
             } else {
+                // Only show error if ALL models and ALL keys failed
                 updateStatus("NET ERROR");
-                addLog("Network Failure. Checks logs.", 'error-msg');
-                speak("I am unable to reach the servers, Sir.");
+                addLog(`All routes failed. Check connection.`, 'error-msg');
+                speak("I cannot establish a link, Sir.");
                 setVisuals(false);
-                if (isListening) safeStartRecognition(); 
             }
         }
 
@@ -709,9 +781,15 @@
 
         function loadVoices() {
             const voices = synth.getVoices();
-            selectedVoice = voices.find(v => v.name.includes("Microsoft Zira")) || voices.find(v => v.name.includes("Female")) || voices[0];
+            // Try to find a good female voice or mobile default
+            selectedVoice = voices.find(v => v.name.includes("Google US English")) || 
+                           voices.find(v => v.name.includes("Samantha")) || 
+                           voices.find(v => v.lang.includes("en-US")) || 
+                           voices[0];
         }
-        window.speechSynthesis.onvoiceschanged = loadVoices;
+        if(synth.onvoiceschanged !== undefined) {
+             synth.onvoiceschanged = loadVoices;
+        }
         loadVoices(); 
 
         function speak(text) {
@@ -730,23 +808,24 @@
             }
 
             const utterance = new SpeechSynthesisUtterance(text.replace(/[*#]/g, ''));
-            utterance.voice = selectedVoice;
-            utterance.pitch = 1.3; 
-            utterance.rate = 1.1; 
+            if(selectedVoice) utterance.voice = selectedVoice;
+            utterance.pitch = 1.1; 
+            utterance.rate = 1.0; 
 
             utterance.onend = () => {
                 // DONE SPEAKING
                 isAISpeaking = false;
                 setVisuals(false);
-                
-                // RESTART MIC IF ENABLED
-                if (isListening) {
-                    updateStatus("LISTENING");
-                    safeStartRecognition();
-                } else {
-                    updateStatus("STANDBY");
-                }
+                updateStatus("STANDBY");
+                // On mobile, we DO NOT auto-restart mic here to save battery and avoid loops.
+                // User must tap to speak again.
             };
+            
+            utterance.onerror = () => {
+                isAISpeaking = false;
+                setVisuals(false);
+                updateStatus("STANDBY");
+            }
 
             synth.speak(utterance);
         }
