@@ -124,6 +124,8 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 5vh;
+            cursor: pointer; /* Indicates it is clickable */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .ring {
@@ -132,6 +134,7 @@
             border: 2px solid transparent;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
             transition: all 0.5s ease;
+            pointer-events: none; /* Let clicks pass to core */
         }
 
         .ring-1 { width: 100%; height: 100%; border-top: 1px solid rgba(0, 243, 255, 0.8); border-bottom: 1px solid rgba(0, 243, 255, 0.8); box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); animation: spin 20s linear infinite; }
@@ -146,6 +149,11 @@
             box-shadow: 0 0 60px #00f3ff;
             animation: pulse 4s infinite ease-in-out;
             z-index: 2;
+        }
+
+        .arc-reactor:active .core {
+            transform: scale(0.9);
+            box-shadow: 0 0 80px #ffffff;
         }
 
         .arc-reactor.listening .core { background: radial-gradient(circle, #fff 0%, #ff0055 30%, transparent 80%); box-shadow: 0 0 80px #ff0055; animation: pulse-fast 1s infinite ease-in-out; }
@@ -165,6 +173,15 @@
             margin-top: 10px;
             text-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
             text-align: center;
+        }
+        
+        #instruction-text {
+            font-family: 'Rajdhani';
+            font-size: 12px;
+            color: rgba(0, 243, 255, 0.6);
+            margin-top: 5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
         
         /* LIVE CLOCK - Mobile Adjusted */
@@ -286,11 +303,13 @@
         <div style="font-size: 12px; letter-spacing: 4px; color: #bc13fe; margin-bottom: 30px; text-transform: uppercase;">XCOSMOS Core Intelligence</div>
         <button id="start-btn" onclick="initializeSystem()">INITIALIZE</button>
         <div style="margin-top: 30px; color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px;">ESTABLISHING LINK</div>
+        <div style="margin-top: 10px; color: #ff0055; font-size: 10px; display:none;" id="https-warning">⚠ MUST USE HTTPS OR LOCALHOST</div>
     </div>
 
     <!-- MAIN HUD -->
     <div id="hud-container">
-        <div class="arc-reactor" id="reactor">
+        <!-- CLICKABLE REACTOR FOR MOBILE -->
+        <div class="arc-reactor" id="reactor" onclick="toggleMicManual()">
             <div class="ring ring-1"></div>
             <div class="ring ring-2"></div>
             <div class="ring ring-3"></div>
@@ -299,6 +318,7 @@
         </div>
         
         <div id="status-text">SYSTEM STANDBY</div>
+        <div id="instruction-text">TAP CORE TO SPEAK</div>
         
         <div class="visualizer" id="wave-viz">
             <div class="bar" style="animation-delay: 0s"></div>
@@ -381,9 +401,12 @@
         let isListening = false;
         let isProcessing = false; // Prevents mic from restarting while thinking
         let isAISpeaking = false; // Prevents mic from restarting while speaking
-        let isMicRunning = false; // Tracks browser speech state
         let audioCtx = null;
-        let watchdogTimer = null;
+        
+        // CHECK PROTOCOL
+        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.protocol !== 'file:') {
+            document.getElementById('https-warning').style.display = 'block';
+        }
 
         // ================= INITIALIZATION =================
         function initializeSystem() {
@@ -397,47 +420,36 @@
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             } catch(e) {}
 
-            // 2. Explicit Mic Permission Request (Hardware Fix)
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                console.log("Requesting Hardware Access...");
-                navigator.mediaDevices.getUserMedia({ 
-                    audio: { 
-                        echoCancellation: true, 
-                        noiseSuppression: true,
-                        autoGainControl: true
-                    } 
-                }).then(stream => {
-                    console.log("Hardware Mic Active");
-                    setTimeout(() => {
-                        stream.getTracks().forEach(track => track.stop());
-                    }, 500); 
-                    
-                    startSystemLogic();
-                })
-                .catch(err => {
-                    console.error("Hardware Mic Error:", err);
-                    alert("ASHNA requires microphone access. Please enable permissions.");
-                    startSystemLogic();
-                });
-            } else {
-                startSystemLogic();
-            }
+            startSystemLogic();
         }
 
         function startSystemLogic() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("Voice features not supported. Text mode only.");
-            }
-
             isSystemActive = true;
             document.getElementById('status-text').innerText = "ONLINE";
             
             playSound("startup");
-            startContinuousListening();
             startClock();
             
-            speak("We are online, Boss. Systems check complete.");
+            // On Mobile, we often can't auto-start listening without direct interaction immediately preceding.
+            // We try, but if it fails, the user must tap the reactor.
+            tryStartListening();
+
+            speak("We are online, Boss. Tap the reactor if voice systems are offline.");
+        }
+
+        // ================= MANUAL TRIGGER (MOBILE FIX) =================
+        function toggleMicManual() {
+            if(!isSystemActive) return;
+
+            // 1. Resume Audio Context again (iOS requirement)
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+            if(isListening) {
+                stopListening();
+                playSound("processing"); // sound for off
+            } else {
+                tryStartListening();
+            }
         }
 
         // ================= SOUND EFFECTS =================
@@ -489,9 +501,6 @@
             const text = input.value.trim();
             if (text) {
                 input.value = "";
-                // Keep chat open
-                console.log("Typed:", text);
-                
                 // Stop mic while processing text command
                 stopListening();
                 
@@ -503,51 +512,77 @@
         }
 
         // ================= SPEECH RECOGNITION =================
+        // Support for both standard and WebKit (iOS)
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-IN'; 
-        recognition.continuous = false; 
-        recognition.interimResults = false;
+        let recognition = null;
 
-        function safeStartRecognition() {
-            if (!isListening) return; 
-            
-            if (isMicRunning) return;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-IN'; 
+            recognition.continuous = false; // Mobile friendly: stop after one sentence
+            recognition.interimResults = false;
 
-            try {
-                const p = recognition.start();
-                if (p && typeof p.catch === 'function') {
-                    p.catch((e) => {
-                        if (e.name !== 'InvalidStateError') console.error("Mic start rejected:", e);
-                    });
-                }
+            recognition.onstart = () => { 
+                isListening = true;
                 updateStatus("LISTENING");
-            } catch (e) {
-                if (e.name !== 'InvalidStateError') {
-                    console.error("Mic start error:", e);
+                playSound("listening"); 
+            }
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                console.log("Heard:", transcript);
+
+                isProcessing = true;
+                stopListening(); // Ensure logical stop
+
+                updateStatus("PROCESSING");
+                playSound("processing");
+                setVisuals(true);
+                handleCommand(transcript); 
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                if(!isProcessing && !isAISpeaking) {
+                     updateStatus("STANDBY");
                 }
+            };
+            
+            recognition.onerror = (event) => {
+                isListening = false;
+                console.warn("Recognition error:", event.error);
+                if(event.error === 'not-allowed') {
+                    alert("Microphone access denied. Please check site permissions.");
+                }
+                updateStatus("STANDBY");
+            };
+        } else {
+             alert("Voice recognition NOT supported in this browser. Please use Chrome (Android) or Safari (iOS).");
+        }
+
+        function tryStartListening() {
+            if (!recognition || isListening || isProcessing || isAISpeaking) return;
+            
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error("Mic start failed:", e);
             }
         }
 
-        function startContinuousListening() {
-            if (!isSystemActive) return;
-            isListening = true;
-            document.getElementById('mic-status').innerText = "LISTENING...";
-            document.getElementById('mic-status').classList.add('listening');
-            safeStartRecognition();
-        }
-
         function stopListening() {
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
             isListening = false;
-            try { recognition.stop(); } catch(e) {}
-            document.getElementById('mic-status').innerText = "OFFLINE";
-            document.getElementById('mic-status').classList.remove('listening');
+            updateStatus("STANDBY");
         }
 
         function updateStatus(status) {
             const text = document.getElementById('status-text');
             const reactor = document.getElementById('reactor');
             const micStatus = document.getElementById('mic-status');
+            const instruct = document.getElementById('instruction-text');
 
             text.innerText = status;
 
@@ -556,51 +591,21 @@
                 text.style.color = "#ff0055"; 
                 micStatus.innerText = "LISTENING";
                 micStatus.classList.add('listening');
+                instruct.innerText = "TAP TO STOP";
             } else if (status === "PROCESSING" || status === "SPEAKING") {
                 reactor.classList.remove('listening');
                 text.style.color = "#00f3ff"; 
                 micStatus.innerText = "BUSY";
                 micStatus.classList.remove('listening');
+                instruct.innerText = "PROCESSING...";
             } else {
                 reactor.classList.remove('listening');
                 text.style.color = "rgba(255, 255, 255, 0.5)";
                 micStatus.innerText = "STANDBY";
                 micStatus.classList.remove('listening');
+                instruct.innerText = "TAP CORE TO SPEAK";
             }
         }
-
-        recognition.onstart = () => { 
-            isMicRunning = true;
-            if (isListening) playSound("listening"); 
-        }
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript.toLowerCase().trim();
-            console.log("Heard:", transcript);
-
-            // STOP MIC IMMEDIATELY TO PREVENT ECHO
-            isProcessing = true;
-            try { recognition.stop(); } catch(e) {}
-
-            updateStatus("PROCESSING");
-            playSound("processing");
-            setVisuals(true);
-            handleCommand(transcript); 
-        };
-
-        recognition.onend = () => {
-            isMicRunning = false;
-            // Only restart if listening mode is ON and AI is NOT busy
-            if (isListening && !isProcessing && !isAISpeaking) {
-                setTimeout(safeStartRecognition, 100); 
-            }
-        };
-        
-        recognition.onerror = (event) => {
-            if (event.error !== 'no-speech' && event.error !== 'aborted') {
-                console.warn("Recognition error:", event.error);
-            }
-        };
 
         // ================= LOGIC & ACTIONS =================
         function handleCommand(transcript) {
@@ -619,13 +624,13 @@
                 speak("YouTube loaded.");
                 return;
             }
-            if (transcript.includes("stop")) {
+            if (transcript.includes("stop") || transcript.includes("cancel")) {
                 isProcessing = false;
                 stopListening();
                 speak("Standing by.");
                 return;
             }
-            if (transcript.includes("open chat") || transcript.includes("pen chat") || transcript.includes("show logs")) {
+            if (transcript.includes("open chat") || transcript.includes("show logs")) {
                 isProcessing = false;
                 if (!isChatOpen) toggleChat();
                 speak("System logs displayed.");
@@ -699,7 +704,6 @@
                 addLog("Network Failure. Checks logs.", 'error-msg');
                 speak("I am unable to reach the servers, Sir.");
                 setVisuals(false);
-                if (isListening) safeStartRecognition(); 
             }
         }
 
@@ -709,9 +713,15 @@
 
         function loadVoices() {
             const voices = synth.getVoices();
-            selectedVoice = voices.find(v => v.name.includes("Microsoft Zira")) || voices.find(v => v.name.includes("Female")) || voices[0];
+            // Try to find a good female voice or mobile default
+            selectedVoice = voices.find(v => v.name.includes("Google US English")) || 
+                           voices.find(v => v.name.includes("Samantha")) || 
+                           voices.find(v => v.lang.includes("en-US")) || 
+                           voices[0];
         }
-        window.speechSynthesis.onvoiceschanged = loadVoices;
+        if(synth.onvoiceschanged !== undefined) {
+             synth.onvoiceschanged = loadVoices;
+        }
         loadVoices(); 
 
         function speak(text) {
@@ -730,23 +740,24 @@
             }
 
             const utterance = new SpeechSynthesisUtterance(text.replace(/[*#]/g, ''));
-            utterance.voice = selectedVoice;
-            utterance.pitch = 1.3; 
-            utterance.rate = 1.1; 
+            if(selectedVoice) utterance.voice = selectedVoice;
+            utterance.pitch = 1.1; 
+            utterance.rate = 1.0; 
 
             utterance.onend = () => {
                 // DONE SPEAKING
                 isAISpeaking = false;
                 setVisuals(false);
-                
-                // RESTART MIC IF ENABLED
-                if (isListening) {
-                    updateStatus("LISTENING");
-                    safeStartRecognition();
-                } else {
-                    updateStatus("STANDBY");
-                }
+                updateStatus("STANDBY");
+                // On mobile, we DO NOT auto-restart mic here to save battery and avoid loops.
+                // User must tap to speak again.
             };
+            
+            utterance.onerror = () => {
+                isAISpeaking = false;
+                setVisuals(false);
+                updateStatus("STANDBY");
+            }
 
             synth.speak(utterance);
         }
