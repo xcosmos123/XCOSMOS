@@ -3,74 +3,74 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Magic AR Frame - Xcosmos</title>
+    <!-- എ-ഫ്രെയിം, മൈൻഡ്-എആർ ലൈബ്രറികൾ -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
     <style>
       body { margin: 0; overflow: hidden; }
       
-      /* Start Button */
+      /* സ്റ്റാർട്ട് ബട്ടൺ സ്റ്റൈൽ */
       #start-button {
-        position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-        padding: 10px 20px; background: #ff0055; color: white; border: none;
-        border-radius: 5px; font-size: 16px; z-index: 999; display: none; cursor: pointer;
+        position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+        padding: 15px 30px; background: #ff0055; color: white; border: none;
+        border-radius: 50px; font-size: 18px; font-weight: bold; z-index: 999; 
+        display: none; cursor: pointer; box-shadow: 0 4px 20px rgba(255, 0, 85, 0.5);
       }
 
-      /* Debug/Status Box */
+      /* സിസ്റ്റം സ്റ്റാറ്റസ് കാണിക്കാനുള്ള ബോക്സ് */
       #status-log {
         position: absolute; top: 10px; left: 10px; z-index: 1000;
-        background: rgba(0, 0, 0, 0.7); color: lime; 
-        font-family: monospace; font-size: 12px; padding: 10px;
-        border-radius: 5px; pointer-events: none;
-        max-width: 80%; word-wrap: break-word;
+        background: rgba(0, 0, 0, 0.85); color: #00ff00; 
+        font-family: 'Courier New', monospace; font-size: 11px; padding: 12px;
+        border-radius: 8px; pointer-events: none; max-width: 85%;
+        border: 1px solid #333; line-height: 1.4;
       }
 
-      /* Loading Screen */
+      /* ലോഡിംഗ് സ്ക്രീൻ */
       #loading-screen {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background: black; color: white; display: flex;
+        background: #000; color: white; display: flex;
         justify-content: center; align-items: center; z-index: 998;
-        flex-direction: column; text-align: center;
+        flex-direction: column;
       }
+
+      .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-left-color: #ff0055;
+        width: 40px; height: 40px; border-radius: 50%;
+        animation: spin 1s linear infinite; margin-bottom: 20px;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
     </style>
   </head>
   <body>
     
-    <!-- Status Log for Debugging -->
-    <div id="status-log">System Initializing...</div>
+    <div id="status-log">സിസ്റ്റം തയ്യാറെടുക്കുന്നു... (System Initializing)</div>
 
     <div id="loading-screen">
-      <div>Loading AR System...</div>
+      <div class="spinner"></div>
+      <div style="font-size: 22px; letter-spacing: 2px; font-weight: bold;">XCOSMOS MAGIC</div>
+      <div style="font-size: 14px; opacity: 0.6; margin-top: 10px;">ക്യാമറ റെഡിയാക്കുന്നു...</div>
     </div>
     
-    <button id="start-button">🔊 Start Magic</button>
+    <button id="start-button">START MAGIC 🔊</button>
 
     <!-- 
-      ശ്രദ്ധിക്കുക (IMPORTANT):
-      ഇവിടെ ഇപ്പോൾ വർക്ക് ചെയ്യാൻ സാമ്പിൾ ലിങ്ക് ആണ്. 
-      GitHub-ൽ ഇടുമ്പോൾ താഴെ കാണുന്ന ലിങ്ക് മാറ്റി './targets.mind' എന്ന് കൊടുക്കുക.
-      REPLACE LINK BELOW WITH: ./targets.mind
+      MindAR പാത്ത് പ്രശ്നം ഒഴിവാക്കാൻ JavaScript വഴി സെറ്റ് ചെയ്യുന്നു. 
+      പ്രിവ്യൂവിൽ വർക്ക് ആകാൻ താൽക്കാലികമായി ഒരു സാമ്പിൾ ലിങ്ക് നൽകുന്നു.
     -->
     <a-scene 
-      mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind; filterMinCF:0.0001; filterBeta: 0.001;" 
+      id="main-scene"
+      mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind; filterMinCF:0.0001; filterBeta: 0.001; warmupTolerance: 7; missTolerance: 50" 
       color-space="sRGB" 
       renderer="colorManagement: true, physicallyCorrectLights" 
       vr-mode-ui="enabled: false" 
       device-orientation-permission-ui="enabled: false">
 
       <a-assets>
-        <!-- 
-           ശ്രദ്ധിക്കുക (IMPORTANT):
-           GitHub-ൽ ഇടുമ്പോൾ താഴെ കാണുന്ന ലിങ്ക് മാറ്റി './video.mp4' എന്ന് കൊടുക്കുക.
-           REPLACE SRC BELOW WITH: ./video.mp4
-        -->
-        <video 
-          id="ar-video" 
-          preload="auto" 
-          loop 
-          crossorigin="anonymous" 
-          playsinline 
-          webkit-playsinline>
+        <!-- വീഡിയോ ഫയൽ -->
+        <video id="ar-video" preload="auto" loop crossorigin="anonymous" playsinline webkit-playsinline>
           <source src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/portfolio/portfolio.mp4" type="video/mp4">
         </video>
       </a-assets>
@@ -78,7 +78,7 @@
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-video src="#ar-video" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-video>
+        <a-video id="video-display" src="#ar-video" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-video>
       </a-entity>
     </a-scene>
 
@@ -89,57 +89,65 @@
       const video = document.getElementById('ar-video');
       const sceneEl = document.querySelector('a-scene');
 
-      function log(msg) {
+      function log(msg, isError = false) {
         console.log(msg);
-        statusLog.innerHTML += "<br>" + msg;
+        const color = isError ? "#ff4444" : "#00ff00";
+        statusLog.innerHTML += `<br><span style="color: ${color}">${msg}</span>`;
       }
 
-      // 1. AR System Ready
-      sceneEl.addEventListener("arReady", (event) => {
-        log("✅ AR System Ready.");
-        log("👉 Click 'Start Magic' button.");
+      // ഫയൽ പാത്തുകൾ ശരിയാക്കുന്നു
+      window.addEventListener('load', () => {
+        log("🌐 വെബ്സൈറ്റ് ലോഡ് ആയി.");
+        
+        // ഇത് GitHub-ൽ മാത്രം പ്രവർത്തിപ്പിക്കുക
+        if (window.location.protocol !== 'blob:') {
+            log("📁 GitHub ലോക്കൽ ഫയലുകൾ ഉപയോഗിക്കുന്നു.");
+            // താഴെ കാണുന്ന വരികൾ നിങ്ങളുടെ ഫയലുകൾ ലോഡ് ചെയ്യാൻ സഹായിക്കും
+            // sceneEl.setAttribute('mindar-image', 'imageTargetSrc: ./targets.mind;');
+            // const videoSource = document.querySelector('#ar-video source');
+            // videoSource.setAttribute('src', './video.mp4');
+            // video.load();
+        } else {
+            log("🧪 പ്രിവ്യൂ മോഡ്: സാമ്പിൾ ഫയലുകൾ ഉപയോഗിക്കുന്നു.");
+        }
+      });
+
+      sceneEl.addEventListener("arReady", () => {
+        log("✅ സിസ്റ്റം റെഡി! (System Ready)");
+        log("👉 START MAGIC ബട്ടൺ അമർത്തുക.");
         loadingScreen.style.display = "none"; 
         startButton.style.display = "block";  
       });
       
-      // 2. AR Loading Error
       sceneEl.addEventListener("arError", (event) => {
-        log("❌ Error: targets.mind not found!");
-        loadingScreen.innerHTML = "<div style='color:red'>FAILED: Check file path</div>";
+        log("❌ പിശക്: ഫയലുകൾ ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല!", true);
+        loadingScreen.innerHTML = "<div style='color:red; padding: 20px; text-align:center;'><b>ERROR:</b> ഫയലുകൾ ലോഡ് ചെയ്യുന്നതിൽ പിശക്. GitHub Pages ലിങ്ക് വഴി തുറക്കുക.</div>";
       });
 
-      // 3. Video Loading Check
-      video.addEventListener("loadeddata", () => {
-        log("✅ Video loaded successfully.");
-      });
+      video.addEventListener("loadeddata", () => log("✅ വീഡിയോ തയ്യാറാണ്."));
+      video.addEventListener("error", () => log("❌ വീഡിയോ ലോഡ് പിശക്.", true));
 
-      video.addEventListener("error", (e) => {
-        log("❌ Error: video file not found!");
-      });
-
-      // 4. Button Click
       startButton.addEventListener('click', () => {
-        log("🔊 Audio Enabled. Scanning...");
+        log("🔍 സ്കാൻ ചെയ്യുന്നു... ഫോട്ടോയ്ക്ക് നേരെ പിടിക്കുക.");
         video.muted = false;
         video.play().then(() => {
-            video.pause(); 
-            video.currentTime = 0;
-            startButton.style.display = 'none';
-        }).catch(e => {
-            log("⚠️ Play error: " + e.message);
+          video.pause();
+          video.currentTime = 0;
+          startButton.style.display = 'none';
+        }).catch(err => {
+          log("⚠️ ഓഡിയോ പ്രശ്നം: " + err.message, true);
         });
       });
 
-      // 5. Target Found
       const arEntity = document.querySelector('[mindar-image-target]');
-      arEntity.addEventListener("targetFound", event => {
-        log("🎯 PHOTO FOUND! Playing video...");
-        video.play().catch(e => log("❌ Play Blocked: " + e.message));
+      
+      arEntity.addEventListener("targetFound", () => {
+        log("🎯 ഫോട്ടോ കണ്ടെത്തി! വീഡിയോ തുടങ്ങുന്നു...");
+        video.play().catch(e => log("❌ പ്ലേ പിശക്: " + e.message, true));
       });
 
-      // 6. Target Lost
-      arEntity.addEventListener("targetLost", event => {
-        log("✋ Photo Lost. Pausing...");
+      arEntity.addEventListener("targetLost", () => {
+        log("⚠️ ഫോട്ടോ നഷ്ടപ്പെട്ടു.");
         video.pause();
       });
     </script>
