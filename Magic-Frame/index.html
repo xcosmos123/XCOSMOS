@@ -8,13 +8,24 @@
 
     <style>
       body { margin: 0; overflow: hidden; }
-      /* വീഡിയോ ഓഡിയോ പ്ലേ ചെയ്യാൻ ഒരു ബട്ടൺ (Browser Policy) */
+      
+      /* Start Button */
       #start-button {
         position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
         padding: 10px 20px; background: #ff0055; color: white; border: none;
         border-radius: 5px; font-size: 16px; z-index: 999; display: none; cursor: pointer;
       }
-      /* Loading Screen Style */
+
+      /* Debug/Status Box */
+      #status-log {
+        position: absolute; top: 10px; left: 10px; z-index: 1000;
+        background: rgba(0, 0, 0, 0.7); color: lime; 
+        font-family: monospace; font-size: 12px; padding: 10px;
+        border-radius: 5px; pointer-events: none;
+        max-width: 80%; word-wrap: break-word;
+      }
+
+      /* Loading Screen */
       #loading-screen {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         background: black; color: white; display: flex;
@@ -25,19 +36,20 @@
   </head>
   <body>
     
+    <!-- Status Log for Debugging -->
+    <div id="status-log">System Initializing...</div>
+
     <div id="loading-screen">
-      <div>Loading Magic...</div>
+      <div>Loading AR System...</div>
     </div>
     
     <button id="start-button">🔊 Start Magic</button>
 
-    <!-- AR Scene Setup -->
     <!-- 
-      IMPORTANT / പ്രധാനം: 
-      ഇപ്പോൾ പ്രിവ്യൂ വർക്ക് ചെയ്യാൻ സാമ്പിൾ ലിങ്ക് ആണ് കൊടുത്തിരിക്കുന്നത്.
-      നിങ്ങൾ GitHub-ൽ അപ്‌ലോഡ് ചെയ്യുമ്പോൾ താഴെ കാണുന്ന ലിങ്ക് മാറ്റി './targets.mind' എന്ന് കൊടുക്കുക.
-      
-      Change URL below to './targets.mind' when uploading to GitHub.
+      ശ്രദ്ധിക്കുക (IMPORTANT):
+      ഇവിടെ ഇപ്പോൾ വർക്ക് ചെയ്യാൻ സാമ്പിൾ ലിങ്ക് ആണ്. 
+      GitHub-ൽ ഇടുമ്പോൾ താഴെ കാണുന്ന ലിങ്ക് മാറ്റി './targets.mind' എന്ന് കൊടുക്കുക.
+      REPLACE LINK BELOW WITH: ./targets.mind
     -->
     <a-scene 
       mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind; filterMinCF:0.0001; filterBeta: 0.001;" 
@@ -48,11 +60,9 @@
 
       <a-assets>
         <!-- 
-          IMPORTANT / പ്രധാനം:
-          ഇപ്പോൾ പ്രിവ്യൂ വർക്ക് ചെയ്യാൻ സാമ്പിൾ വീഡിയോ ആണ് കൊടുത്തിരിക്കുന്നത്.
-          നിങ്ങൾ GitHub-ൽ അപ്‌ലോഡ് ചെയ്യുമ്പോൾ താഴെ കാണുന്ന ലിങ്ക് മാറ്റി './video.mp4' എന്ന് കൊടുക്കുക.
-
-          Change src below to './video.mp4' when uploading to GitHub.
+           ശ്രദ്ധിക്കുക (IMPORTANT):
+           GitHub-ൽ ഇടുമ്പോൾ താഴെ കാണുന്ന ലിങ്ക് മാറ്റി './video.mp4' എന്ന് കൊടുക്കുക.
+           REPLACE SRC BELOW WITH: ./video.mp4
         -->
         <video 
           id="ar-video" 
@@ -67,11 +77,7 @@
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- AR Target -->
       <a-entity mindar-image-target="targetIndex: 0">
-        <!-- 
-           width/height: വീഡിയോയുടെ വലിപ്പത്തിനനുസരിച്ച് ഇത് അഡ്ജസ്റ്റ് ചെയ്യാം.
-        -->
         <a-video src="#ar-video" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-video>
       </a-entity>
     </a-scene>
@@ -79,48 +85,61 @@
     <script>
       const startButton = document.getElementById('start-button');
       const loadingScreen = document.getElementById('loading-screen');
+      const statusLog = document.getElementById('status-log');
       const video = document.getElementById('ar-video');
       const sceneEl = document.querySelector('a-scene');
 
-      // AR റെഡി ആകുമ്പോൾ
+      function log(msg) {
+        console.log(msg);
+        statusLog.innerHTML += "<br>" + msg;
+      }
+
+      // 1. AR System Ready
       sceneEl.addEventListener("arReady", (event) => {
-        console.log("MindAR is ready");
+        log("✅ AR System Ready.");
+        log("👉 Click 'Start Magic' button.");
         loadingScreen.style.display = "none"; 
         startButton.style.display = "block";  
       });
       
-      // AR Error handling
+      // 2. AR Loading Error
       sceneEl.addEventListener("arError", (event) => {
-        console.error("MindAR failed to start", event);
-        loadingScreen.innerHTML = "<div>Error: Camera or File not found!</div><div style='font-size:12px; margin-top:10px'>Check console for details.</div>";
-        loadingScreen.style.color = "#ff5555";
+        log("❌ Error: targets.mind not found!");
+        loadingScreen.innerHTML = "<div style='color:red'>FAILED: Check file path</div>";
       });
 
-      // Video Error handling
+      // 3. Video Loading Check
+      video.addEventListener("loadeddata", () => {
+        log("✅ Video loaded successfully.");
+      });
+
       video.addEventListener("error", (e) => {
-        console.error("Video Error:", video.error);
-        alert("Video loading error. Check file path.");
+        log("❌ Error: video file not found!");
       });
 
-      // ബട്ടൺ ക്ലിക്ക് ചെയ്യുമ്പോൾ
+      // 4. Button Click
       startButton.addEventListener('click', () => {
+        log("🔊 Audio Enabled. Scanning...");
         video.muted = false;
-        video.play().catch(e => {
-            console.error("Play failed:", e);
+        video.play().then(() => {
+            video.pause(); 
+            video.currentTime = 0;
+            startButton.style.display = 'none';
+        }).catch(e => {
+            log("⚠️ Play error: " + e.message);
         });
-        startButton.style.display = 'none';
       });
 
-      // ഇമേജ് കാണുമ്പോൾ
+      // 5. Target Found
       const arEntity = document.querySelector('[mindar-image-target]');
       arEntity.addEventListener("targetFound", event => {
-        console.log("Photo Found!");
-        video.play().catch(e => console.log("Auto-play prevented", e));
+        log("🎯 PHOTO FOUND! Playing video...");
+        video.play().catch(e => log("❌ Play Blocked: " + e.message));
       });
 
-      // ഇമേജ് മാറുമ്പോൾ
+      // 6. Target Lost
       arEntity.addEventListener("targetLost", event => {
-        console.log("Photo Lost!");
+        log("✋ Photo Lost. Pausing...");
         video.pause();
       });
     </script>
