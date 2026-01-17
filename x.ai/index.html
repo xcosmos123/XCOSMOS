@@ -367,20 +367,16 @@
             "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",
             "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",
             "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",
-            "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"
+            "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",
+            "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",
+            "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",
+            "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"
         ];
         let apiKeyIndex = 0; 
 
-        // MULTI-CORE REDUNDANCY (EXPANDED)
+        // SINGLE CORE MODE (XIAOMI ONLY)
         const NEURAL_CORES = [
-            "xiaomi/mimo-v2-flash:free",
-            "google/gemini-2.0-flash-exp:free",
-            "google/gemma-3-27b-it:free",
-            "meta-llama/llama-3-8b-instruct:free",
-            "microsoft/phi-3-mini-128k-instruct:free",
-            "mistralai/mistral-7b-instruct:free",
-            "huggingfaceh4/zephyr-7b-beta:free",
-            "openchat/openchat-7b:free"
+            "xiaomi/mimo-v2-flash:free"
         ];
 
         let currentCoreIndex = 0; 
@@ -466,9 +462,10 @@
         function toggleMicManual() {
             if(!isSystemActive) return;
 
-            // FIX: Force Stop any active speech to clear audio channel for Mic
+            // FIX: Force reset ALL blocking states
             if(window.speechSynthesis) window.speechSynthesis.cancel();
             isAISpeaking = false;
+            isProcessing = false; // Force unlock
 
             // 1. Resume Audio Context again (iOS requirement)
             if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
@@ -477,7 +474,7 @@
                 stopListening();
                 playSound("processing"); // sound for off
             } else {
-                document.getElementById('instruction-text').innerText = "INITIALIZING MIC...";
+                updateStatus("INITIALIZING...");
                 tryStartListening();
             }
         }
@@ -556,6 +553,7 @@
                 isListening = true;
                 updateStatus("LISTENING");
                 playSound("listening"); 
+                addLog("Mic Started", 'system-msg'); // Feedback for user
             }
 
             recognition.onresult = (event) => {
@@ -582,13 +580,16 @@
                 isListening = false;
                 console.warn("Recognition error:", event.error);
                 
+                let msg = "Mic Error: " + event.error;
+
                 // SILENT FAIL & RECOVERY
                 if(event.error === 'not-allowed') {
                     // Only alert if permission is strictly denied
                     // But user asked to suppress error, so we just show status
                     updateStatus("MIC LOCKED");
+                    msg = "Permission Denied. Check Browser Settings.";
                 } else if (event.error === 'network') {
-                     // Silent retry handled by status
+                     msg = "Network Error (Voice API).";
                 } else if (event.error === 'no-speech') {
                     updateStatus("STANDBY");
                     return;
@@ -597,7 +598,7 @@
                     return;
                 }
                 
-                // Do NOT alert/speak error. Just update status text.
+                addLog(msg, 'error-msg');
                 updateStatus("OFFLINE");
             };
         } else {
@@ -606,12 +607,19 @@
         }
 
         function tryStartListening() {
-            if (!recognition || isListening || isProcessing || isAISpeaking) return;
+            if (!recognition) {
+                alert("Voice API not supported on this browser.");
+                return;
+            }
+            if (isListening) return; // Don't double start
             
             try {
                 recognition.start();
             } catch (e) {
-                // Silent fail
+                // If start fails (e.g. already started), ensure state is consistent
+                console.error("Mic start failed:", e);
+                addLog("Start Failed: " + e.message, 'error-msg');
+                updateStatus("MIC ERROR");
             }
         }
 
@@ -643,7 +651,7 @@
                 micStatus.innerText = "BUSY";
                 micStatus.classList.remove('listening');
                 instruct.innerText = "PROCESSING...";
-            } else if (status === "OFFLINE" || status === "MIC LOCKED") {
+            } else if (status === "OFFLINE" || status === "MIC LOCKED" || status === "MIC ERROR") {
                 reactor.classList.remove('listening');
                 text.style.color = "#555"; 
                 micStatus.innerText = "OFFLINE";
